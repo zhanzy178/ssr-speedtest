@@ -8,7 +8,7 @@ import requests
 import socket
 import json
 import prettytable as pt
-timeout=600
+ping_timeout=600
 ssr_config_path = '/usr/local/share/shadowsocksr/config.json'
 
 def get_free_port(iface=None):
@@ -22,10 +22,10 @@ def get_free_port(iface=None):
 
 def ping_ssrserver(url):
     try:
-        r = pythonping.ping(url, timeout=timeout*1e-3)
+        r = pythonping.ping(url, timeout=ping_timeout*1e-3)
         return (r.rtt_avg_ms, r.rtt_min_ms, r.rtt_max_ms)
     except:
-        return (timeout, timeout, timeout)
+        return (ping_timeout, ping_timeout, ping_timeout)
 
 def multithread_ping_ssrserver(ssr_config):
     urls = [s['server'] for s in ssr_config]
@@ -88,19 +88,24 @@ def subscribe_ssr_config(sub_url):
     
     return ssr_config
 
+
+speedtest_ping_timeout=20
+
 if __name__ == '__main__':
     # subscribe
     sub_urls = []
     with open('sub_urls.txt', 'r') as f:
         sub_urls = f.readlines()
-
     ssr_config = []
     for sub_url in sub_urls:
         ssr_config += subscribe_ssr_config(sub_url)
 
     # test ping results.
     ping_result = multithread_ping_ssrserver(ssr_config)
-    valid_index = [i for i, v in enumerate(ping_result) if v[0] <= 20 and '回国' not in ssr_config[i]['remarks'] and '打机' not in ssr_config[i]['remarks'] and '游戏' not in ssr_config[i]['remarks']]#  and 'cchkbn.ccddns.online' in ssr_config[i]['server']]
+    valid_index = [i for i, v in enumerate(ping_result) if v[0] <= speedtest_ping_timeout
+                                                            and '回国' not in ssr_config[i]['remarks'] 
+                                                            and '打机' not in ssr_config[i]['remarks'] 
+                                                            and '游戏' not in ssr_config[i]['remarks']]
     ping_result_str = '%d/%d servers are ping accessible!!!\n%.2f%% ping pass rate!!!'%(len(valid_index), len(ssr_config), 100.0*(float(len(valid_index))/len(ssr_config)))
     ssr_config = [ssr_config[i] for i in valid_index]
     ping_result = [ping_result[i] for i in valid_index]
@@ -110,16 +115,20 @@ if __name__ == '__main__':
     results_list = track_progress(outwall_speed_test, ssr_config)
     for i in range(len(results_list)):
         results_list[i]['remarks'] = ssr_config[i]['remarks']
+        results_list[i]['ssr_config'] = ssr_config[i]
         results_list[i]['ping'] = ping_result[i][0]
-
-    ssr_service(results_list[0])
-
-    # print result
-    results_list = sorted(results_list, key=lambda s:(-s['google_success_rate'], s['google_success_ave_time']))
-    tb = pt.PrettyTable()
-    tb.field_names = ['Server',  'Google Access Rate', 'Google Acess Delay', 'Ping(ms)']
-    for r in results_list:
-        tb.add_row([r['remarks'], '%.2f%%'%r['google_success_rate'], '%.3fs'%r['google_success_ave_time'], r['ping']]) 
     
-    print(ping_result_str)
-    print(tb)
+    if len(result_list) == 0:
+        print('No available ssr server!!!')
+    else:
+        results_list = sorted(results_list, key=lambda s:(-s['google_success_rate'], s['google_success_ave_time']))
+        ssr_service(results_list[0]['ssr_config'])
+
+        # print result
+        tb = pt.PrettyTable()
+        tb.field_names = ['Server',  'Google Access Rate', 'Google Acess Delay', 'Ping(ms)']
+        for r in results_list:
+            tb.add_row([r['remarks'], '%.2f%%'%r['google_success_rate'], '%.3fs'%r['google_success_ave_time'], r['ping']]) 
+    
+        print(ping_result_str)
+        print(tb)
