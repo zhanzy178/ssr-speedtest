@@ -118,7 +118,7 @@ if __name__ == '__main__':
         results_list[i]['ssr_config'] = ssr_config[i]
         results_list[i]['ping'] = ping_result[i][0]
     
-    if len(result_list) == 0:
+    if len(results_list) == 0:
         print('No available ssr server!!!')
     else:
         results_list = sorted(results_list, key=lambda s:(-s['google_success_rate'], s['google_success_ave_time']))
