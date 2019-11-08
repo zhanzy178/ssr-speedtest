@@ -34,3 +34,9 @@ bash ssr-speedtest.sh
 ## Result
 
 ![image-20191108144043089](README/image-20191108144043089.png)
+
+## References:
+
+> https://github.com/mobier/shadowsocksr-speed
+>
+> https://alanlee.fun/2018/05/18/ubuntu-ssr/
