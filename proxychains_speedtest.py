@@ -12,12 +12,18 @@ import json
 def speed():
     result = dict()
 
-    # test www.google.com
-    success_rate, success_ave_time = curltest.test_curl_ave_time('www.google.com', 10)
+    test_urls = ['www.google.com']
+    with open('test_urls.txt', 'r') as f:
+        test_urls += [u.strip() for u in f.readlines() if u.strip() not in test_urls]
+
+    for url in test_urls:
+        
+        # test www.google.com
+        success_rate, success_ave_time = curltest.test_curl_ave_time(url, 10)
     
-    result['google_success_rate'] = success_rate
-    result['google_success_ave_time'] = success_ave_time
+        result[url] = dict(success_rate=success_rate, ave_time=success_ave_time)
     
+
     with open('speed_result.json', 'w') as f:
         json.dump(result, f)
 

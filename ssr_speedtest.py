@@ -121,14 +121,29 @@ if __name__ == '__main__':
     if len(results_list) == 0:
         print('No available ssr server!!!')
     else:
-        results_list = sorted(results_list, key=lambda s:(-s['google_success_rate'], s['google_success_ave_time']))
+        results_list = sorted(results_list, key=lambda s:(-s['www.google.com']['success_rate'], s['www.google.com']['ave_time']))
         ssr_service(results_list[0]['ssr_config'])
+
+        field_names = ['server']
+        for k in results_list[0]:
+            if k not in ['remarks', 'ssr_config', 'ping']:
+                field_names.append(k)
+        field_names.append('ping')
 
         # print result
         tb = pt.PrettyTable()
-        tb.field_names = ['Server',  'Google Access Rate', 'Google Acess Delay', 'Ping(ms)']
+        tb.field_names = field_names
         for r in results_list:
-            tb.add_row([r['remarks'], '%.2f%%'%r['google_success_rate'], '%.3fs'%r['google_success_ave_time'], r['ping']]) 
+            row_data = []
+            for k in field_names:
+                if k == 'server':
+                    row_data.append(r['remarks'])
+                elif k == 'ping':
+                    row_data.append('%.2fms'%r['ping'])
+                else:
+                    row_data.append('%.2f%% / %.3fs'%(r[k]['success_rate'], r[k]['ave_time']))
+
+            tb.add_row(row_data) 
     
         print(ping_result_str)
         print(tb)
