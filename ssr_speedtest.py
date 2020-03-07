@@ -50,7 +50,7 @@ def ssr_service(ssr, port=9050, save_best_local=False):
     with open(ssr_config_path, 'w') as f:
         json.dump(ssr_config_json, f, indent=4)
     if save_best_local:
-        with open('best_ssr.config', 'w') as f:
+        with open('best_ssr.json', 'w') as f:
             json.dump(ssr_config_json, f, indent=4)
     os.system('ssr start')
     print(ssr['remarks']+"/"+ssr['server'])
