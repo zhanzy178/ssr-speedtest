@@ -8,7 +8,7 @@ import requests
 import socket
 import json
 import prettytable as pt
-ping_timeout=600
+ping_timeout=200
 ssr_config_path = '/usr/local/share/shadowsocksr/config.json'
 
 def get_free_port(iface=None):
