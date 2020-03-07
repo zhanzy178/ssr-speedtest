@@ -32,7 +32,7 @@ def multithread_ping_ssrserver(ssr_config):
     return track_parallel_progress(ping_ssrserver, urls, len(urls))
 
 
-def ssr_service(ssr, port=9050):
+def ssr_service(ssr, port=9050, save_best_local=False):
     ssr_config_json = dict(
             server=ssr['server'],
             local_address='127.0.0.1',
@@ -48,10 +48,14 @@ def ssr_service(ssr, port=9050):
             protocol_param=ssr['protoparam']) 
     os.system('ssr stop')
     with open(ssr_config_path, 'w') as f:
-        json.dump(ssr_config_json, f)
+        json.dump(ssr_config_json, f, indent=4)
+    if save_best_local:
+        with open('best_ssr.config', 'w') as f:
+            json.dump(ssr_config_json, f, indent=4)
     os.system('ssr start')
     print(ssr['remarks']+"/"+ssr['server'])
-    
+
+
 
 def outwall_speed_test(ssr_config):
     port = get_free_port()
@@ -122,7 +126,8 @@ if __name__ == '__main__':
         print('No available ssr server!!!')
     else:
         results_list = sorted(results_list, key=lambda s:(-s['www.google.com']['success_rate'], s['www.google.com']['ave_time']))
-        ssr_service(results_list[0]['ssr_config'])
+        results_list = [r for r in results_list if r['www.google.com']['success_rate'] != 0]
+        ssr_service(results_list[0]['ssr_config'], save_best_local=True)
 
         field_names = ['server']
         for k in results_list[0]:

@@ -14,14 +14,20 @@ def speed():
     test_urls = ['www.google.com']
     with open('test_urls.txt', 'r') as f:
         test_urls += [u.strip() for u in f.readlines() if u.strip() not in test_urls]
+    gind = test_urls.index('www.google.com')
+    test_urls.insert(0, test_urls.pop(gind))
 
+    google_fail = False
     for url in test_urls:
-        
         # test www.google.com
+        if google_fail:
+            result[url] = dict(success_rate=0, ave_time=0)
+            continue
         success_rate, success_ave_time = curltest.test_curl_ave_time(url, 1)
-    
         result[url] = dict(success_rate=success_rate, ave_time=success_ave_time)
-    
+        if url == 'www.google.com':
+            if success_rate == 0:
+                google_fail = True
 
     with open('speed_result.json', 'w') as f:
         json.dump(result, f)

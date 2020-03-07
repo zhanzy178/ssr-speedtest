@@ -1,5 +1,6 @@
 sub_urls.txt
 speed_result.json
+best_ssr.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
