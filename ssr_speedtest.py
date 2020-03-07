@@ -32,7 +32,7 @@ def multithread_ping_ssrserver(ssr_config):
     return track_parallel_progress(ping_ssrserver, urls, len(urls))
 
 
-def ssr_service(ssr, port=6667):
+def ssr_service(ssr, port=9050):
     ssr_config_json = dict(
             server=ssr['server'],
             local_address='127.0.0.1',
@@ -55,7 +55,7 @@ def ssr_service(ssr, port=6667):
 
 def outwall_speed_test(ssr_config):
     port = get_free_port()
-    port = 6667
+    port = 9050
     ssr_service(ssr_config, port)
 
     os.system('rm speed_result.json')

@@ -5,7 +5,6 @@ from mmcv import track_parallel_progress, track_progress
 import os
 import requests
 import socket
-import speedtest
 import curltest
 import json
 
