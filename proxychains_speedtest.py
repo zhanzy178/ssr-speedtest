@@ -18,7 +18,7 @@ def speed():
     for url in test_urls:
         
         # test www.google.com
-        success_rate, success_ave_time = curltest.test_curl_ave_time(url, 10)
+        success_rate, success_ave_time = curltest.test_curl_ave_time(url, 1)
     
         result[url] = dict(success_rate=success_rate, ave_time=success_ave_time)
     
